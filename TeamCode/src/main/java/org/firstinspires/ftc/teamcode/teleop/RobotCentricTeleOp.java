@@ -31,26 +31,26 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class RobotCentricTeleOp extends NextFTCOpMode {
 
     // These are the robot's different systems (we’ll use them later)
-    private ShootingSystem shootingSystem;
-    private ShootingDirectionServo shootingDirectionServo;
-    private BallLoadingServo ballLoadingServo;
-    private Intake intakeSystem;
+    //private ShootingSystem shootingSystem;
+    //private ShootingDirectionServo shootingDirectionServo;
+    //private BallLoadingServo ballLoadingServo;
+    //private Intake intakeSystem;
 
     // This is the "constructor" — runs once when the program starts loading
     public RobotCentricTeleOp() {
 
         // We connect our subsystems to the robot and give them access to telemetry (data shown on driver station)
-        shootingSystem = ShootingSystem.getInstance(telemetry);
-        intakeSystem = Intake.getInstance(telemetry);
-        shootingDirectionServo = ShootingDirectionServo.getInstance(telemetry);
-        ballLoadingServo = BallLoadingServo.getInstance(telemetry);
+        //shootingSystem = ShootingSystem.getInstance(telemetry);
+        //intakeSystem = Intake.getInstance(telemetry);
+        //shootingDirectionServo = ShootingDirectionServo.getInstance(telemetry);
+        //ballLoadingServo = BallLoadingServo.getInstance(telemetry);
 
         // Here we “add” all these subsystems so NextFTC can manage and update them automatically
         addComponents(
-                new SubsystemComponent(shootingSystem),
-                new SubsystemComponent(intakeSystem),
-                new SubsystemComponent(shootingDirectionServo),
-                new SubsystemComponent(ballLoadingServo),
+                //new SubsystemComponent(shootingSystem),
+                //new SubsystemComponent(intakeSystem),
+                //new SubsystemComponent(shootingDirectionServo),
+                //new SubsystemComponent(ballLoadingServo),
                 BulkReadComponent.INSTANCE,   // reads all sensors at once for faster updates
                 BindingsComponent.INSTANCE    // helps connect buttons on the gamepads to commands
         );
@@ -84,42 +84,42 @@ public class RobotCentricTeleOp extends NextFTCOpMode {
         /* 🎮 GAMEPAD 2 CONTROLS (the second controller) */
 
         // X button → turn shooter on/off
-        Gamepads.gamepad2().x().whenBecomesTrue(shootingSystem.startStop);
+        //Gamepads.gamepad2().x().whenBecomesTrue(shootingSystem.startStop);
 
         // Y button → aim the shooter down
-        Gamepads.gamepad2().y().whenBecomesTrue(shootingDirectionServo.downShootingServo);
+        //Gamepads.gamepad2().y().whenBecomesTrue(shootingDirectionServo.downShootingServo);
 
         // Left bumper → lower shooter power
-        Gamepads.gamepad2().leftBumper().whenBecomesTrue(shootingSystem.decreaseShootingPower);
+        //Gamepads.gamepad2().leftBumper().whenBecomesTrue(shootingSystem.decreaseShootingPower);
 
         // Right bumper → increase shooter power
-        Gamepads.gamepad2().rightBumper().whenBecomesTrue(shootingSystem.increaseShootingPower);
+        //Gamepads.gamepad2().rightBumper().whenBecomesTrue(shootingSystem.increaseShootingPower);
 
         // Intake System Controls on Gamepad 2 as before
-        Gamepads.gamepad2().b().whenBecomesTrue(intakeSystem.reverse);
-        Gamepads.gamepad2().a().whenBecomesTrue(intakeSystem.startStop);
+        //Gamepads.gamepad2().b().whenBecomesTrue(intakeSystem.reverse);
+        //Gamepads.gamepad2().a().whenBecomesTrue(intakeSystem.startStop);
 
-        /*
+/*
         // B button → reverse the intake (spit out the balls)
-        Gamepads.gamepad2().b().whenBecomesTrue(intakeSystem.reverse);
+        //Gamepads.gamepad2().b().whenBecomesTrue(intakeSystem.reverse);
 
         // A button → aim the shooter up
-        Gamepads.gamepad2().a().whenBecomesTrue(shootingDirectionServo.upShootingServo);
+        //Gamepads.gamepad2().a().whenBecomesTrue(shootingDirectionServo.upShootingServo);
 */
         // Back button → stop everything in the shooting system
-        Gamepads.gamepad2().back().whenBecomesTrue(shootingSystem.stopAllSubsystems);
+        //Gamepads.gamepad2().back().whenBecomesTrue(shootingSystem.stopAllSubsystems);
 
         // D-Pad Left → run the ball loading servo backward (to load balls)
-        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(ballLoadingServo.runBackward());
+        //Gamepads.gamepad2().dpadLeft().whenBecomesTrue(ballLoadingServo.runBackward());
 
         // D-Pad Right → stop the ball loading servo
-        Gamepads.gamepad2().dpadRight().whenBecomesTrue(ballLoadingServo.stopContinuous());
+        //Gamepads.gamepad2().dpadRight().whenBecomesTrue(ballLoadingServo.stopContinuous());
 //New Update
         // D-Pad Left → run the ball loading servo backward (to load balls)
-        Gamepads.gamepad2().dpadUp().whenBecomesTrue(shootingDirectionServo.downShootingServo);
+        //Gamepads.gamepad2().dpadUp().whenBecomesTrue(shootingDirectionServo.downShootingServo);
 
         // D-Pad Right → stop the ball loading servo
-        Gamepads.gamepad2().dpadDown().whenBecomesTrue(shootingDirectionServo.upShootingServo);
+        //Gamepads.gamepad2().dpadDown().whenBecomesTrue(shootingDirectionServo.upShootingServo);
 
     }
 
