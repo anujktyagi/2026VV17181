@@ -22,7 +22,7 @@
 
         // Motor instances representing the shooting motors
         private MotorEx shootingMotor1 = new MotorEx("sm1");
-        private MotorEx shootingMotor2 = new MotorEx("sm2");
+        //private MotorEx shootingMotor2 = new MotorEx("sm2");
 
         // Motor group with motor2 reversed
         //private MotorGroup shooterMotors;
@@ -30,13 +30,13 @@
         // Private constructor to ensure only one instance exists
         private ShootingSystem(Telemetry telemetry) {
             this.telemetry = telemetry;
-            shootingMotor2.reversed();  // Set motor2 to run in reverse
+            shootingMotor1.reversed();  // Set motor2 to run in reverse
             //shooterMotors = new MotorGroup(motor2, motor1);
         }
 
         public void stop() {
             shootingMotor1.setPower(STOP_POWER);
-            shootingMotor2.setPower(STOP_POWER);
+            //shootingMotor2.setPower(STOP_POWER);
         }
 
         /**
@@ -65,30 +65,30 @@
         // Power levels for different shooting states
         private static final double LOW_THRESHOLD = 0.25;      // Low power shoot
         private static final double MID_POWER = 0.57;      // Medium power shoot
-        private static final double HIGH_POWER = 0.70;     // High power shoot
+        private static final double HIGH_POWER = 2.09;     // High power shoot
         private static final double STOP_POWER = 0.0;     // Motors off
 
         private static final double SHOOTING_PWR_INCREMENT = 0.05;
 
         public Command stopAllSubsystems = new InstantCommand(() -> {
                 shootingMotor1.setPower(STOP_POWER);
-                shootingMotor2.setPower(STOP_POWER);
+                //shootingMotor2.setPower(STOP_POWER);
 
                 // Get the object of Intake singleton class and stop that motor
                 Intake.getInstance().stop();
-                BallLoadingServo.getInstance().stop();
+                //BallLoadingServo.getInstance().stop();
 
         }).requires(this);
 
         // Command to start the shooting motors at low power
         public Command startStop = new InstantCommand(() -> {
             if(shootingMotor1.getPower()<=0.10) {
-                shootingMotor1.setPower(MID_POWER);
-                shootingMotor2.setPower(MID_POWER);
+                shootingMotor1.setPower(HIGH_POWER);
+                //shootingMotor2.setPower(MID_POWER);
                 //telemetry.addData("Shooting Mode", "MEDIUM");
             } else {
                 shootingMotor1.setPower(STOP_POWER);
-                shootingMotor2.setPower(STOP_POWER);
+                //shootingMotor2.setPower(STOP_POWER);
                 //telemetry.addData("Shooting Mode", "STOP");
             }
             //telemetry.update();
@@ -97,14 +97,14 @@
         // Command to start the shooting motors at medium power
         //public Command startMid = new InstantCommand(() -> shooterMotors.setPower(MID_POWER)).requires(this);
         // Sample code for command when you want to execute multiple lines of code for that command.
-        public Command toggleShootingPower = new InstantCommand(() -> {
+/*        public Command toggleShootingPower = new InstantCommand(() -> {
             if(shootingMotor1.getPower()<=0.10 || shootingMotor1.getPower()>=HIGH_POWER) {
                 shootingMotor1.setPower(MID_POWER);
-                shootingMotor2.setPower(MID_POWER);
+                //shootingMotor2.setPower(MID_POWER);
                 //telemetry.addData("Shooting Mode", "MEDIUM");
             } else {
                 shootingMotor1.setPower(HIGH_POWER);
-                shootingMotor2.setPower(HIGH_POWER);
+                //shootingMotor2.setPower(HIGH_POWER);
                 //telemetry.addData("Shooting Mode", "HIGH");
             }
             //telemetry.update();
@@ -115,11 +115,11 @@
             double newShootingPower = shootingMotor1.getPower() + SHOOTING_PWR_INCREMENT;
             if (newShootingPower >= HIGH_POWER) {
                 shootingMotor1.setPower(HIGH_POWER);
-                shootingMotor2.setPower(HIGH_POWER);
+                //shootingMotor2.setPower(HIGH_POWER);
                 //telemetry.addData("Shooting Mode", "HIGH");
             } else {
                 shootingMotor1.setPower(newShootingPower);
-                shootingMotor2.setPower(newShootingPower);
+                //shootingMotor2.setPower(newShootingPower);
                 //telemetry.addData("Shooting Mode", "CUSTOM: " + String.format("%.2f", newShootingPower));
             }
             //telemetry.update();
@@ -129,16 +129,16 @@
             double newShootingPower = shootingMotor1.getPower() - SHOOTING_PWR_INCREMENT;
             if (newShootingPower <= LOW_THRESHOLD) {
                 shootingMotor1.setPower(LOW_THRESHOLD);
-                shootingMotor2.setPower(LOW_THRESHOLD);
+                //shootingMotor2.setPower(LOW_THRESHOLD);
                 //telemetry.addData("Shooting Mode", "LOW_THRESHOLD");
             } else {
                 shootingMotor1.setPower(newShootingPower);
-                shootingMotor2.setPower(newShootingPower);
+                //shootingMotor2.setPower(newShootingPower);
                 //telemetry.addData("Shooting Mode", "CUSTOM: " + String.format("%.2f", newShootingPower));
             }
             //telemetry.update();
         }).requires(this);
-
+*/
         // Command to stop the shooting motors
     //    public Command stop = new InstantCommand(() -> shooterMotors.setPower(STOP_POWER)).requires(this);
 
@@ -151,8 +151,8 @@
             telemetry.addData("<=====Shooting System=====>","");
             telemetry.addData("Shooter 1", "Pwr: %.2f | Pos: %.2f | Vel: %.2f",
                     shootingMotor1.getPower(), shootingMotor1.getCurrentPosition(), shootingMotor1.getVelocity());
-            telemetry.addData("Shooter 2", "Pwr: %.2f | Pos: %.2f | Vel: %.2f",
-                    shootingMotor2.getPower(), shootingMotor2.getCurrentPosition(), shootingMotor2.getVelocity());
+//            telemetry.addData("Shooter 2", "Pwr: %.2f | Pos: %.2f | Vel: %.2f",
+//                    shootingMotor2.getPower(), shootingMotor2.getCurrentPosition(), shootingMotor2.getVelocity());
             telemetry.update();
         }
     }
