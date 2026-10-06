@@ -30,7 +30,7 @@
         // Private constructor to ensure only one instance exists
         private ShootingSystem(Telemetry telemetry) {
             this.telemetry = telemetry;
-            shootingMotor1.reversed();  // Set motor2 to run in reverse
+            //shootingMotor1.reversed();  // Set motor2 to run in reverse default will be forward
             //shooterMotors = new MotorGroup(motor2, motor1);
         }
 
@@ -65,10 +65,10 @@
         // Power levels for different shooting states
         private static final double LOW_THRESHOLD = 0.25;      // Low power shoot
         private static final double MID_POWER = 0.57;      // Medium power shoot
-        private static final double HIGH_POWER = 2.09;     // High power shoot
+        private static final double HIGH_POWER = 1.0;     // High power shoot
         private static final double STOP_POWER = 0.0;     // Motors off
 
-        private static final double SHOOTING_PWR_INCREMENT = 0.05;
+        private static final double SHOOTING_PWR_ADJUST = 0.05;
 
         public Command stopAllSubsystems = new InstantCommand(() -> {
                 shootingMotor1.setPower(STOP_POWER);
@@ -110,9 +110,9 @@
             //telemetry.update();
         }).requires(this);
 
-        // Command to start the shooting motors at high power
+ */       // Command to start the shooting motors at high power
         public Command increaseShootingPower = new InstantCommand(() -> {
-            double newShootingPower = shootingMotor1.getPower() + SHOOTING_PWR_INCREMENT;
+            double newShootingPower = shootingMotor1.getPower() + SHOOTING_PWR_ADJUST;
             if (newShootingPower >= HIGH_POWER) {
                 shootingMotor1.setPower(HIGH_POWER);
                 //shootingMotor2.setPower(HIGH_POWER);
@@ -126,7 +126,7 @@
         }).requires(this);
 
         public Command decreaseShootingPower = new InstantCommand(() -> {
-            double newShootingPower = shootingMotor1.getPower() - SHOOTING_PWR_INCREMENT;
+            double newShootingPower = shootingMotor1.getPower() - SHOOTING_PWR_ADJUST;
             if (newShootingPower <= LOW_THRESHOLD) {
                 shootingMotor1.setPower(LOW_THRESHOLD);
                 //shootingMotor2.setPower(LOW_THRESHOLD);
@@ -138,7 +138,7 @@
             }
             //telemetry.update();
         }).requires(this);
-*/
+
         // Command to stop the shooting motors
     //    public Command stop = new InstantCommand(() -> shooterMotors.setPower(STOP_POWER)).requires(this);
 
