@@ -64,9 +64,11 @@
 
         // Power levels for different shooting states
         private static final double LOW_THRESHOLD = 0.25;      // Low power shoot
-        private static final double MID_POWER = 0.57;      // Medium power shoot
+        private static final double MID_POWER = 0.45;      // Medium power shoot
         private static final double HIGH_POWER = 1.0;     // High power shoot
         private static final double STOP_POWER = 0.0;     // Motors off
+
+        double currentShootingPower = MID_POWER;
 
         private static final double SHOOTING_PWR_ADJUST = 0.05;
 
@@ -83,10 +85,11 @@
         // Command to start the shooting motors at low power
         public Command startStop = new InstantCommand(() -> {
             if(shootingMotor1.getPower()<=0.10) {
-                shootingMotor1.setPower(HIGH_POWER);
-                //shootingMotor2.setPower(MID_POWER);
+                //shootingMotor1.setPower(HIGH_POWER);
+                shootingMotor1.setPower(currentShootingPower==MID_POWER?MID_POWER:currentShootingPower);
                 //telemetry.addData("Shooting Mode", "MEDIUM");
             } else {
+                currentShootingPower = shootingMotor1.getPower();
                 shootingMotor1.setPower(STOP_POWER);
                 //shootingMotor2.setPower(STOP_POWER);
                 //telemetry.addData("Shooting Mode", "STOP");
@@ -149,8 +152,9 @@
         @Override
         public void periodic() {
             telemetry.addData("<=====Shooting System=====>","");
-            telemetry.addData("Shooter 1", "Pwr: %.2f | Pos: %.2f | Vel: %.2f",
-                    shootingMotor1.getPower(), shootingMotor1.getCurrentPosition(), shootingMotor1.getVelocity());
+            telemetry.addData("Shooter ", "Power: %.2f", shootingMotor1.getPower());
+//            telemetry.addData("Shooter 1", "Pwr: %.2f | Pos: %.2d | Vel: %.2f",
+//                    shootingMotor1.getPower(), shootingMotor1.getCurrentPosition(), shootingMotor1.getVelocity());
 //            telemetry.addData("Shooter 2", "Pwr: %.2f | Pos: %.2f | Vel: %.2f",
 //                    shootingMotor2.getPower(), shootingMotor2.getCurrentPosition(), shootingMotor2.getVelocity());
             telemetry.update();

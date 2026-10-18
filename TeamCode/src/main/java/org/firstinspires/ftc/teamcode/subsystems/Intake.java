@@ -96,8 +96,8 @@ public class Intake implements Subsystem {
     public void periodic() {
         telemetry.addData("<===== Intake Subsystem =====>", "");
         telemetry.addData("Intake Power", "%.2f", motor.getPower());
-        telemetry.addData("Intake Direction", motor.getDirection());
-        telemetry.addData("Intake Velocity", "%.2f", motor.getVelocity());
+        //telemetry.addData("Intake Direction", motor.getDirection());
+        //telemetry.addData("Intake Velocity", "%.2f", motor.getVelocity());
         //telemetry.update(); // optional, updates the screen immediately
     }
 }
