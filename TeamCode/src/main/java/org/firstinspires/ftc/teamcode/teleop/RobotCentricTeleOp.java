@@ -10,24 +10,26 @@ import static org.firstinspires.ftc.teamcode.ChassisConstants.RIGHT_REAR_MOTOR_N
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 // These are the “subsystems” — little robot parts that do special jobs
-import org.firstinspires.ftc.teamcode.subsystems.BallLoadingDC;
-import org.firstinspires.ftc.teamcode.subsystems.BallLoadingServo;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.ShootingDirectionServo;
-import org.firstinspires.ftc.teamcode.subsystems.ShootingSystem;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.BallLoadingDC;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Light;
+import org.firstinspires.ftc.teamcode.subsystems.Limelight3ASubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShootingSystem;
 
 // These come from the NextFTC library
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import dev.nextftc.hardware.impl.Direction;
+import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name = "Robot Centric TeleOp")
@@ -36,8 +38,11 @@ public class RobotCentricTeleOp extends NextFTCOpMode {
     // These are the robot's different systems (we’ll use them later)
     private ShootingSystem shootingSystem;
     //private ShootingDirectionServo shootingDirectionServo;
-    private BallLoadingDC ballLoadingServo;
+    private BallLoadingDC ballLoadingDC;
     private Intake intakeSystem;
+    private Limelight3ASubsystem limelight3ASubsystem;
+    private Light light;
+    protected final IMUEx imu = new IMUEx("imu", Direction.DOWN, Direction.FORWARD).zeroed();
 
     // This is the "constructor" — runs once when the program starts loading
     public RobotCentricTeleOp() {
@@ -46,17 +51,27 @@ public class RobotCentricTeleOp extends NextFTCOpMode {
         shootingSystem = ShootingSystem.getInstance(telemetry);
         intakeSystem = Intake.getInstance(telemetry);
         //shootingDirectionServo = ShootingDirectionServo.getInstance(telemetry);
-        ballLoadingServo = BallLoadingDC.getInstance(telemetry);
+        ballLoadingDC = BallLoadingDC.getInstance(telemetry);
+        light = Light.getInstance(telemetry);
+    }
 
-        // Here we “add” all these subsystems so NextFTC can manage and update them automatically
+    @Override
+    public void onInit() {
+        super.onInit();
+    
+        limelight3ASubsystem = Limelight3ASubsystem.getInstance(this.hardwareMap, telemetry, imu);
+
+        // Here we "add" all these subsystems so NextFTC can manage and update them automatically
         addComponents(
+                new SubsystemComponent(limelight3ASubsystem),
                 new SubsystemComponent(shootingSystem),
                 new SubsystemComponent(intakeSystem),
-                //new SubsystemComponent(shootingDirectionServo),
-                new SubsystemComponent(ballLoadingServo),
+                new SubsystemComponent(ballLoadingDC),
+                new SubsystemComponent(light),
                 BulkReadComponent.INSTANCE,   // reads all sensors at once for faster updates
                 BindingsComponent.INSTANCE    // helps connect buttons on the gamepads to commands
         );
+
     }
 
     // These are our 4 drive motors (the robot’s wheels)
@@ -92,7 +107,7 @@ public class RobotCentricTeleOp extends NextFTCOpMode {
             new SequentialGroup(
                     shootingSystem.startStop,
                     new Delay(0.5), //For shooting motor to get to the right speed
-                    ballLoadingServo.startStop
+                    ballLoadingDC.startStop
             )
         );
 
@@ -123,14 +138,29 @@ public class RobotCentricTeleOp extends NextFTCOpMode {
         //Gamepads.gamepad1().dpadLeft().whenBecomesTrue(BallLoadingDC.getInstance().reverse);
 
         // D-Pad Right → stop the ball loading servo
-        Gamepads.gamepad2().dpadRight().whenBecomesTrue(BallLoadingDC.getInstance().stopLoading);
-//New Update
+        //Gamepads.gamepad2().dpadRight().whenBecomesTrue(BallLoadingDC.getInstance().stopLoading);
+
         // D-Pad Left → run the ball loading servo backward (to load balls)
-        //Gamepads.gamepad2().dpadUp().whenBecomesTrue(shootingDirectionServo.downShootingServo);
+        //Gamepads.gamepad2().dpadUp().whenBecomesTrue(light.setPattern(Light.SOLID_BLUE_POSITION));
+        Gamepads.gamepad2().dpadUp().whenBecomesTrue(
+                new SequentialGroup(
+                        light.setPattern(0.05),
+                        new InstantCommand(() -> {
+                            limelight3ASubsystem.switchLinelinePipeline(9);
+                        }).requires(limelight3ASubsystem)
+                )
+        );
 
         // D-Pad Right → stop the ball loading servo
-        //Gamepads.gamepad2().dpadDown().whenBecomesTrue(shootingDirectionServo.upShootingServo);
-
+        //Gamepads.gamepad2().dpadDown().whenBecomesTrue(light.setPattern(Light.SOLID_RED_POSITION));
+        Gamepads.gamepad2().dpadDown().whenBecomesTrue(
+                new SequentialGroup(
+                        light.setPattern(-0.05),
+                        new InstantCommand(() -> {
+                            limelight3ASubsystem.switchLinelinePipeline(8);
+                        }).requires(limelight3ASubsystem)
+                )
+        );
     }
 
 }
